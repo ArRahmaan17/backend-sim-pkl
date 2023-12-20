@@ -23,7 +23,11 @@ router.post('/', async (req, res) => {
 
 router.patch('/{:id}', async (req, res) => {
     const user = req.body;
-    const post = await Users.create(user);
+    const post = await Users.update(user, {
+        where: {
+            id: req.params.id
+        }
+    });
     res.json({ 'status': 'success', 'data': post });
 })
 
