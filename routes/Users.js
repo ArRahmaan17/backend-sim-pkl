@@ -21,14 +21,15 @@ router.post('/', async (req, res) => {
     res.json({ 'status': 'success', 'data': post });
 })
 
-router.patch('/{:id}', async (req, res) => {
+router.put('/:id', async (req, res) => {
     const user = req.body;
-    const post = await Users.update(user, {
+    await Users.update(user, {
         where: {
             id: req.params.id
         }
     });
-    res.json({ 'status': 'success', 'data': post });
+    const userUpdated = await Users.findByPk(req.params.id)
+    res.json({ 'status': `successfully update profile user ${req.params.id}`, 'data': userUpdated });
 })
 
 
