@@ -1,11 +1,15 @@
 const express = require('express')
 const router = express.Router();
 const { Users } = require('../models')
-const folder = 'storage/profile'
+let folder = 'storage/profile'
 const mutler = require('multer')
 const storage = mutler.diskStorage({
     destination: (req, file, cb) => {
-        if (file) {
+        console.log(file.fieldname == 'profile_picture')
+        if (file.fieldname == 'profile_picture') {
+            cb(null, folder)
+        } else if (file.fieldname == 'attendance') {
+            folder = 'storage/attendance'
             cb(null, folder)
         }
     },
@@ -40,13 +44,12 @@ router.post('/', async (req, res) => {
 
 router.post('/:id', upload.single('profile_picture'), async (req, res) => {
     let user = req.body;
-    console.log(req.file)
     user.profile_picture = req.file !== undefined ? req.file.path : null
-    // await Users.update(user, {
-    //     where: {
-    //         id: req.params.id
-    //     }
-    // });
+    await Users.update(user, {
+        where: {
+            id: req.params.id
+        }
+    });
     const userUpdated = await Users.findByPk(req.params.id)
     res.json({ 'status': `successfully update profile user ${req.params.id}`, 'data': userUpdated });
 })
