@@ -1,4 +1,5 @@
 const express = require('express')
+const fs = require('fs')
 const router = express.Router();
 const { users } = require('../models')
 let folder = 'storage/profile'
@@ -40,7 +41,15 @@ router.post('/', async (req, res) => {
     const post = await users.create(user);
     res.json({ 'status': 'success', 'data': post });
 })
-
+router.post('/attendance', async (req, res) => {
+    let buffer = Buffer.from(req.body.photo, 'base64');
+    if (!fs.existsSync(`storage/attendances/${req.body.username}`)) {
+        fs.mkdirSync(`storage/attendances/${req.body.username}`)
+    }
+    const date = new Date;
+    fs.writeFileSync(`storage/attendances/${req.body.username}/attendance_${req.body.username}_${req.body.status}_${(date.toDateString()).split(' ').join('_')}.jpg`, buffer)
+    res.json({ message: `Attendance User ${req.body.username} successfully` });
+})
 router.post('/:id', upload.single('profile_picture'), async (req, res) => {
     let user = req.body;
     user.profile_picture = req.file !== undefined ? req.file.path : null
@@ -51,11 +60,7 @@ router.post('/:id', upload.single('profile_picture'), async (req, res) => {
     });
     const userUpdated = await users.findByPk(req.params.id)
     res.json({ 'status': `successfully update profile user ${req.params.id}`, 'data': userUpdated ?? {} });
-})
-
-router.post('/attendance', upload.single('attendance_photo'), (req, res) => {
-    console.log(req)
-})
+});
 
 
 module.exports = router;
