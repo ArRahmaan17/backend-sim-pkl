@@ -48,6 +48,7 @@ router.post('/attendance', Authenticated, async (req, res) => {
     const { latitude, longitude } = JSON.parse(req.body.location);
     const attendance = await attendances.create({
         status: req.body.status,
+        userId: req.body.userId,
         photo: filename,
         location: `${latitude},${longitude}`,
     });
