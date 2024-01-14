@@ -1,9 +1,11 @@
 const express = require('express')
 const fs = require('fs')
 const router = express.Router();
+const { Op } = require('sequelize')
 const { users, attendances } = require('../models')
 let folder = 'storage/profile'
 const mutler = require('multer');
+const moment = require('moment')
 const { Authenticated } = require('../middlewares/Authenticated');
 const storage = mutler.diskStorage({
     destination: (req, file, cb) => {
@@ -28,6 +30,7 @@ router.get('/', Authenticated, async (req, res) => {
     const allUsers = await users.findAll();
     res.json({ 'status': 'success', 'message': 'List all users', 'data': allUsers ?? [] });
 });
+
 router.get('/:id', Authenticated, async (req, res) => {
     const user = await users.findOne({
         where: {
@@ -53,7 +56,23 @@ router.post('/attendance', Authenticated, async (req, res) => {
         location: `${latitude},${longitude}`,
     });
     res.json({ message: `Attendance User ${req.body.username} successfully` });
-})
+});
+
+router.get('/attendance/:id', Authenticated, async (req, res) => {
+    const attendance = await attendances.findOne({
+        where: {
+            userId: req.params.id,
+            createdAt: { [Op.gte]: moment().utcOffset(7).startOf('D'), [Op.lt]: moment().utcOffset(7).endOf('D') }
+        }
+    });
+    console.log(moment().utcOffset(7).format('YYYY-MM-DD'))
+    if (attendance) {
+        res.json({ 'status': 'success', 'message': 'Attendance status fetched' }, 200);
+    } else {
+        res.json({ 'status': 'error', 'message': 'No attendance record found for this user' }, 404);
+    }
+});
+
 router.post('/:id', [upload.single('profile_picture'), Authenticated], async (req, res) => {
     let user = req.body;
     user.profile_picture = req.file !== undefined ? req.file.path : null
