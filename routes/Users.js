@@ -28,7 +28,10 @@ const upload = mutler({ storage: storage });
 
 router.get('/', Authenticated, async (req, res) => {
     const allUsers = await users.findAll();
-    res.json({ 'status': 'success', 'message': 'List all users', 'data': allUsers ?? [] });
+    if (allUsers.length === 0) {
+        return res.json({ 'status': 'error', 'message': 'No users found', 'data': [] }, 404);
+    }
+    res.json({ 'status': 'success', 'message': 'List all users', 'data': allUsers ?? [] }, 200);
 });
 
 router.get('/:id', Authenticated, async (req, res) => {
