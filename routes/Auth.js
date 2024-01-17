@@ -26,7 +26,7 @@ router.post('/login', async (req, res) => {
             if (!match) {
                 res.json({ status: 'failed', message: 'wrong username and password combination', data: [] }, 404);
             } else {
-                const accessToken = sign({ username: user.username, id: user.id }, 'mamanrecing')
+                const accessToken = sign({ username: user.username, id: user.id, clusterId: user.clusterId }, 'mamanrecing')
                 res.json({ status: 'success', message: 'successfully logged in', data: { accessToken: accessToken }, }, 200);
             }
         })

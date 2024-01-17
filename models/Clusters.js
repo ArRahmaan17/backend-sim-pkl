@@ -13,6 +13,10 @@ module.exports = (sequelize, DataTypes) => {
             onUpdate: 'cascade',
             onDelete: 'cascade',
         });
+        clusters.hasOne(models.tasks, {
+            onUpdate: 'cascade',
+            onDelete: 'cascade',
+        });
     }
     return clusters;
 }

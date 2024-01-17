@@ -34,6 +34,14 @@ module.exports = (sequelize, DataTypes) => {
             onUpdate: 'cascade',
             onDelete: 'cascade',
         });
+        users.hasOne(models.tasks, {
+            onUpdate: 'cascade',
+            onDelete: 'cascade',
+        });
+        users.hasOne(models.tasks_detail, {
+            onUpdate: 'cascade',
+            onDelete: 'cascade',
+        });
     }
     return users;
 }

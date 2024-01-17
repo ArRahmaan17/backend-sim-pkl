@@ -68,7 +68,6 @@ router.get('/attendance/:id', Authenticated, async (req, res) => {
             createdAt: { [Op.gte]: moment().utcOffset(7).startOf('D'), [Op.lt]: moment().utcOffset(7).endOf('D') }
         }
     });
-    console.log(moment().utcOffset(7).format('YYYY-MM-DD'))
     if (attendance) {
         res.json({ 'status': 'success', 'message': 'Attendance status fetched' }, 200);
     } else {

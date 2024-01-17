@@ -2,19 +2,14 @@ module.exports = (sequelize, DataTypes) => {
     const tasks = sequelize.define('tasks', {
         title: {
             type: DataTypes.STRING(100),
-            allowNull: true,
+            allowNull: false,
         }, start_date: {
             type: DataTypes.DATEONLY,
-            allowNull: true,
+            allowNull: false,
         },
         deadline_date: {
             type: DataTypes.DATEONLY,
             allowNull: false,
-            unique: true
-        }, group: {
-            type: DataTypes.STRING,
-            allowNull: false,
-            unique: true
         }, content: {
             type: DataTypes.TEXT,
             allowNull: false,
@@ -24,14 +19,14 @@ module.exports = (sequelize, DataTypes) => {
         }, status: {
             type: DataTypes.ENUM,
             values: ['Pending', 'Start', 'End'],
-            allowNull: true,
+            allowNull: false,
         }
     });
-    // tasks.associate = (models) => {
-    //     tasks.hasOne(models.attendances, {
-    //         onUpdate: 'cascade',
-    //         onDelete: 'cascade',
-    //     });
-    // }
+    tasks.associate = (models) => {
+        tasks.hasOne(models.tasks_detail, {
+            onUpdate: 'cascade',
+            onDelete: 'cascade',
+        });
+    }
     return tasks;
 }
