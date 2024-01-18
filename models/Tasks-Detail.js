@@ -7,12 +7,16 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
         }
-    });
-    // details.associate = (models) => {
-    //     details.hasOne(models.users, {
-    //         onUpdate: 'cascade',
-    //         onDelete: 'cascade',
-    //     });
-    // }
+    }, { paranoid: true });
+    tasks_detail.associate = (models) => {
+        tasks_detail.belongsTo(models.tasks, {
+            onUpdate: 'cascade',
+            onDelete: 'cascade',
+        });
+        tasks_detail.belongsTo(models.users, {
+            onUpdate: 'cascade',
+            onDelete: 'cascade',
+        });
+    }
     return tasks_detail;
 }

@@ -7,16 +7,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false,
         }
-    });
+    }, { paranoid: true });
     clusters.associate = (models) => {
-        clusters.hasOne(models.users, {
-            onUpdate: 'cascade',
-            onDelete: 'cascade',
-        });
-        clusters.hasOne(models.tasks, {
-            onUpdate: 'cascade',
-            onDelete: 'cascade',
-        });
+        clusters.hasMany(models.users);
     }
     return clusters;
 }

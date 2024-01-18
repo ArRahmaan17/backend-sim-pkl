@@ -6,7 +6,7 @@ const expressValidation = require('express-validation');
 // app.use(expressValidation());
 app.use(express.json());
 app.use(cors());
-app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.json({ limit: '100Mb' }));
 app.use('/storage', express.static('storage/'))
 
 const db = require('./models');

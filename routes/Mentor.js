@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const moment = require('moment');
 const fs = require('fs')
-const { tasks } = require('../models');
+const { tasks, users, tasks_detail } = require('../models');
 const { Authenticated } = require('../middlewares/Authenticated');
 let folder = 'storage/task';
 const mutler = require('multer');
@@ -15,7 +16,7 @@ const diskStorage = mutler.diskStorage({
 });
 const upload = mutler({ storage: diskStorage });
 router.get('/task', Authenticated, async (req, res) => {
-    let tasksData = await tasks.findAll();
+    let tasksData = await tasks.findAll({ include: users });
     if (tasksData.length > 0) {
         res.json({ message: "Successfully get all tasks", data: tasksData }, 200);
     } else {
@@ -23,7 +24,9 @@ router.get('/task', Authenticated, async (req, res) => {
     }
 });
 router.get('/task/:id', Authenticated, async (req, res) => {
-    let tasksData = await tasks.findByPk(req.params.id);
+    let tasksData = await tasks.findByPk(req.params.id, {
+        include: [tasks_detail, users]
+    });
     if (tasksData) {
         res.json({ message: "Successfully get task", data: tasksData }, 200);
     } else {
@@ -38,7 +41,7 @@ router.post('/task/create', Authenticated, async (req, res) => {
     }
     let filename = undefined;
     if (req.body.thumbnail) {
-        filename = `storage/task/task_${req.body.title.split(' ').join('_')}.jpg`;
+        filename = `storage/task/task_${req.body.title.split(' ').join('_')}_${moment().utcOffset(7).format("Y_M_D_H_m_s")}.jpg`;
         fs.writeFileSync(filename, thumbnailBuffer)
     }
     req.body.userId = req.user.id

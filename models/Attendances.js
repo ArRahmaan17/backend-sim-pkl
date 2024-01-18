@@ -12,6 +12,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         }
-    });
+    }, { paranoid: true });
+    attendances.associate = (models) => {
+        attendances.belongsTo(models.users, {
+            onUpdate: 'cascade',
+            onDelete: 'cascade',
+        });
+    }
     return attendances;
 }

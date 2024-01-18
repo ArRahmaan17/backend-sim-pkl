@@ -28,19 +28,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
-    });
+    }, { paranoid: true });
     users.associate = (models) => {
-        users.hasOne(models.attendances, {
+        users.belongsTo(models.clusters, {
             onUpdate: 'cascade',
             onDelete: 'cascade',
-        });
-        users.hasOne(models.tasks, {
-            onUpdate: 'cascade',
-            onDelete: 'cascade',
-        });
-        users.hasOne(models.tasks_detail, {
-            onUpdate: 'cascade',
-            onDelete: 'cascade',
+            foreignKey: 'clusterId'
         });
     }
     return users;

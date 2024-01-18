@@ -21,12 +21,17 @@ module.exports = (sequelize, DataTypes) => {
             values: ['Pending', 'Start', 'End'],
             allowNull: false,
         }
-    });
+    }, { paranoid: true });
     tasks.associate = (models) => {
-        tasks.hasOne(models.tasks_detail, {
+        tasks.belongsTo(models.clusters, {
             onUpdate: 'cascade',
             onDelete: 'cascade',
         });
+        tasks.belongsTo(models.users, {
+            onUpdate: 'cascade',
+            onDelete: 'cascade',
+        });
+        tasks.hasMany(models.tasks_detail);
     }
     return tasks;
 }
