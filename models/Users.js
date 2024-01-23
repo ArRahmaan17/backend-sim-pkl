@@ -28,7 +28,17 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
-    }, { paranoid: true });
+    }, {
+        paranoid: true, defaultScope: {
+            attributes: {
+                exclude: ['password']
+            }
+        }, scopes: {
+            withPassword: {
+                attributes: {},
+            },
+        }
+    });
     users.associate = (models) => {
         users.belongsTo(models.clusters, {
             onUpdate: 'cascade',

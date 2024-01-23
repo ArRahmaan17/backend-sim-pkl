@@ -32,6 +32,7 @@ module.exports = (sequelize, DataTypes) => {
             onDelete: 'cascade',
         });
         tasks.hasMany(models.tasks_detail);
+        tasks.hasMany(models.tasks_comment);
     }
     return tasks;
 }

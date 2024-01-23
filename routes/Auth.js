@@ -18,7 +18,7 @@ router.post('/registration', async (req, res) => {
 
 router.post('/login', async (req, res) => {
     const requestUser = req.body;
-    const user = await users.findOne({ where: { username: requestUser.username } });
+    const user = await users.scope('withPassword').findOne({ where: { username: requestUser.username } });
     if (!user) {
         res.json({ status: 'failed', message: 'username doest match to our records', data: [] }, 404);
     } else {
