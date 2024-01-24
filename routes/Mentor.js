@@ -2,24 +2,15 @@ const express = require('express');
 const router = express.Router();
 const moment = require('moment');
 const fs = require('fs')
-const { tasks, users, tasks_detail, tasks_comment } = require('../models');
+const { tasks, users, tasks_comment } = require('../models');
 const { Authenticated } = require('../middlewares/Authenticated');
 let folder = 'storage/task';
-const mutler = require('multer');
-const diskStorage = mutler.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, folder)
-    }, filename: (req, file, cb) => {
-        cb(null, 'test.jpg');
-    }
-});
-const upload = mutler({ storage: diskStorage });
 router.get('/task', Authenticated, async (req, res) => {
     let tasksData = await tasks.findAll({ include: users });
     if (tasksData.length > 0) {
-        res.json({ message: "Successfully get all tasks", data: tasksData }, 200);
+        res.status(200).json({ message: "Successfully get all tasks", data: tasksData });
     } else {
-        res.json({ message: "Failed get tasks", data: tasksData }, 404);
+        res.status(404).json({ message: "Failed get tasks", data: tasksData });
     }
 });
 router.get('/task/:id', Authenticated, async (req, res) => {
@@ -27,9 +18,9 @@ router.get('/task/:id', Authenticated, async (req, res) => {
         include: { all: true, nested: true }
     });
     if (tasksData) {
-        res.json({ message: "Successfully get task", data: tasksData }, 200);
+        res.status(200).json({ message: "Successfully get task", data: tasksData });
     } else {
-        res.json({ message: "Failed get task", data: tasksData }, 404);
+        res.status(404).json({ message: "Failed get task", data: tasksData });
     }
 });
 
@@ -56,7 +47,7 @@ router.post('/task/create', Authenticated, async (req, res) => {
     req.body.userId = req.user.id
     req.body.thumbnail = filename ?? "default-task.jpg"
     let task = await tasks.create(req.body);
-    res.json({ 'message': "Anjim" })
+    res.status(200).json({ 'message': "Task Create Successfully" })
 });
 
 module.exports = router;

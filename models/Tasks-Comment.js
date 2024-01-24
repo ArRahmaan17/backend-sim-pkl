@@ -3,14 +3,6 @@ module.exports = (sequelize, DataTypes) => {
         content: {
             type: DataTypes.STRING,
             allowNull: false,
-        }, up: {
-            type: DataTypes.BIGINT,
-            allowNull: false,
-            default: 0,
-        }, down: {
-            type: DataTypes.BIGINT,
-            allowNull: false,
-            default: 0,
         }
     }, { paranoid: true });
     tasks_comment.associate = (models) => {
