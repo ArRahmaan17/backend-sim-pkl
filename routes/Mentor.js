@@ -46,8 +46,22 @@ router.post('/task/create', Authenticated, async (req, res) => {
     }
     req.body.userId = req.user.id
     req.body.thumbnail = filename ?? "default-task.jpg"
-    let task = await tasks.create(req.body);
-    res.status(200).json({ 'message': "Task Create Successfully" })
+    await tasks.create(req.body);
+    res.status(201).json({ 'message': "Task Create Successfully" })
 });
 
+router.post('/task/:id/update', Authenticated, async (req, res) => {
+    let filename = undefined;
+    if (req.body.thumbnail) {
+        let task = await tasks.findByPk(req.params.id);
+        fs.rmSync(task.thumbnail)
+        let thumbnailBuffer = Buffer.from(req.body.thumbnail.replace(/^data\:image\/\w+\;base64\,/, ""), 'base64');
+        filename = `storage/task/task_${req.body.title.split(' ').join('_')}_${moment().utcOffset(7).format("Y_M_D_H_m_s")}.jpg`;
+        fs.writeFileSync(filename, thumbnailBuffer)
+        req.body.thumbnail = filename;
+    }
+    req.body.userId = req.user.id
+    await tasks.update(req.body, { where: { id: req.params.id } });
+    res.status(200).json({ 'message': "Task Updated Successfully" })
+});
 module.exports = router;
