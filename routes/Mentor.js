@@ -2,8 +2,9 @@ const express = require('express');
 const router = express.Router();
 const moment = require('moment');
 const fs = require('fs')
-const { tasks, users, tasks_comment } = require('../models');
+const { tasks, users, tasks_comment, tasks_detail } = require('../models');
 const { Authenticated } = require('../middlewares/Authenticated');
+const { Op } = require('sequelize');
 let folder = 'storage/task';
 router.get('/task', Authenticated, async (req, res) => {
     let tasksData = await tasks.findAll({ include: users });
@@ -15,7 +16,11 @@ router.get('/task', Authenticated, async (req, res) => {
 });
 router.get('/task/:id', Authenticated, async (req, res) => {
     let tasksData = await tasks.findByPk(req.params.id, {
-        include: { all: true, nested: true }
+        include: [
+            { model: users },
+            { model: tasks_comment, include: { model: users } },
+            { model: tasks_detail, where: { userId: req.user.id }, required: false, include: { model: users } },
+        ]
     });
     if (tasksData) {
         res.status(200).json({ message: "Successfully get task", data: tasksData });
