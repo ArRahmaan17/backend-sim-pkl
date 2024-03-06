@@ -2,7 +2,7 @@ const express = require('express')
 const fs = require('fs')
 const router = express.Router();
 const { Op } = require('sequelize')
-const { users, attendances } = require('../models')
+const { users, attendances, tasks_detail } = require('../models')
 let folder = 'storage/profile'
 const mutler = require('multer');
 const moment = require('moment')
@@ -25,15 +25,20 @@ const storage = mutler.diskStorage({
 });
 const upload = mutler({ storage: storage });
 
-
 router.get('/', Authenticated, async (req, res) => {
     const allUsers = await users.findAll();
     if (allUsers.length === 0) {
-        return res.json({ 'status': 'error', 'message': 'No users found', 'data': [] }, 404);
+        return res.status(404).json({ 'status': 'error', 'message': 'No users found', 'data': [] });
     }
-    res.json({ 'status': 'success', 'message': 'List all users', 'data': allUsers ?? [] }, 200);
+    return res.status(200).json({ 'status': 'success', 'message': 'List all users', 'data': allUsers ?? [] });
 });
 
+router.post('/task/:id/update', Authenticated, async (req, res) => {
+    req.body.taskId = req.params.id;
+    req.body.userId = req.user.id;
+    console.log(await tasks_detail.create(req.body))
+    res.status(200).json({ 'taek': 'taek' })
+});
 router.get('/:id', Authenticated, async (req, res) => {
     const user = await users.findOne({
         where: {

@@ -10,6 +10,10 @@ module.exports = (sequelize, DataTypes) => {
         status: {
             type: DataTypes.ENUM("START", "ANALYTIC", "DEVELOPMENT", "DONE"),
             allowNull: false,
+        },
+        description: {
+            type: DataTypes.STRING,
+            allowNull: false,
         }
     }, { paranoid: true });
     tasks_detail.associate = (models) => {
