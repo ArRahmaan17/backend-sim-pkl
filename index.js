@@ -29,12 +29,11 @@ io.engine.use(session({
 }));
 
 io.on("connection", (socket) => {
-    console.log(socket.id)
     socket.on("send_message", (data) => {
         socket.broadcast.emit('message_received', data);
     });
     socket.on("disconnected", () => {
-        console.log('socket disconnected');
+        console.log(`socket disconnected`);
     })
 });
 db.sequelize.sync().then(() => {
